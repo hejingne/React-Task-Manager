@@ -5,9 +5,27 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const TASKS = [
+  {
+    name: "React.js",
+    checked: true,
+    id:"todo-0"
+  },
+  {
+    name: "Angular.js",
+    checked: false,
+    id:"todo-1"
+  },
+  {
+    name: "Bootstrap",
+    checked: false,
+    id:"todo-2"
+  }
+];
+
 root.render(
   <React.StrictMode>
-    <App />
+    <App subject="React Task Manager" tasks={TASKS}/>
   </React.StrictMode>
 );
 
