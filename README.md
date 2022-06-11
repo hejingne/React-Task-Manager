@@ -1,6 +1,6 @@
 ## Introduction
 
-A web application implemented in React in tandem with ReactDOM that allow users to add, edit and delete any task they want to work on and also mark any task as complete using the mouse or keyboard input.\
+A web application implemented in React.js in tandem with Hooks and ReactDOM that allows users to add, edit and delete any task they want to work on and also mark any task as complete using the mouse or keyboard input.\
 Users can view specific subsets of tasks -- all tasks, only the active tasks or only the completed tasks by selecting the corresponding filtering keyword.
 
 ## Getting Started with Create React App
