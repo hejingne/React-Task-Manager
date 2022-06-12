@@ -8,71 +8,65 @@ const FILTER_MAP = {
   Active: task => !task.checked,
   Completed: task => task.checked
 }
-const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 function App(props) {
-  /* Tasks State */
+  // States
   const [tasks, setTasks] = useState(props.tasks);
-  /* Filter keyword state */
   const [filter, setFilter] = useState('All');
-  /* Function invoked by the `Add Task` button */
-  function addTask(name) {
-    const length = tasks.length + 1;
-    const newId = "todo-" + length;
-    const newTask = {
-      name: name,
-      checked: false,
-      id: newId,
-      key: newId
-    };
-    setTasks([...tasks, newTask]);
-  }
-  /* Generate static filter buttons */
-  const filterBtnList = FILTER_NAMES.map(name => <FilterBtn name={name}
-                                                            key={name}
-                                                            isPressed={name === filter}
-                                                            setFilter={setFilter}/>);
-  /* Variable used for generating dynamic list of tasks */
+
+  // Dynamic list of tasks
   const taskList = tasks
                    .filter(FILTER_MAP[filter])
                    .map(task => <Task name={task.name}
-                                      checked={task.checked}
                                       id={task.id}
                                       key={task.id}
-                                      toggleTaskChecked={toggleTaskChecked}
+                                      checked={task.checked}
+                                      checkTask={checkTask}
                                       editTask={editTask}
-                                      deleteTask={deleteTask} />
-                                  );
-  /* Generate dynamic heading message */
+                                      deleteTask={deleteTask} />);
+  // Dynamic heading message
   const tasksNoun = taskList.length <= 1 ? 'task' : 'tasks';
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
-  /* Function invoked by toggling checkboxes */
-  function toggleTaskChecked(id) {  // To synchronize the browser with our data
-    const updatedTasks = tasks.map(task => {
-      if (task.id === id) {
-        return {...task, checked: !task.checked};
-      } else {
-        return task;
-      }
-    });
+
+  // Static filter buttons
+  const filterBtnList = Object.keys(FILTER_MAP)
+                              .map(keyword => <FilterBtn name={keyword}
+                                                         key={keyword}
+                                                         isPressed={keyword === filter}
+                                                         setFilter={setFilter} />);
+
+  // Actions
+  function addTask(name) {
+    const newId = `todo-${tasks.length + 1}`;
+    const newTask = {
+      name: name,
+      id: newId,
+      key: newId,
+      checked: false
+    };
+    const updatedTasks = [...tasks, newTask];
     setTasks(updatedTasks);
   }
-  /* Function invoked by editing a task */
+
+  function checkTask(id) {
+    const updatedTasks = tasks.map(task => (task.id === id)
+                                      ? {...task, checked: !task.checked}
+                                      : task);
+    setTasks(updatedTasks);
+  }
+
   function editTask(id, newName) {
-    const updatedTasks = tasks.map(task => {
-      if (task.id === id) {
-        return {...task, name: newName};
-      } else {
-        return task;
-      }
-    });
+    const updatedTasks = tasks.map(task => (task.id === id)
+                                      ? {...task, name: newName}
+                                      : task);
     setTasks(updatedTasks);
   }
-  /* Function invoked by deleting a task */
+
   function deleteTask(id) {
     const remainingTasks = tasks.filter(task => task.id !== id);
     setTasks(remainingTasks);
   }
+
 
   return (
     <div className="app_stack_lg">

@@ -1,12 +1,7 @@
 import React, {useState} from "react";
 
-
 export default function Form(props) {
   const [name, setName] = useState('');
-
-  function handleInputChange(e) {
-    setName(e.target.value);
-  }
 
   function handleBtnSubmit(e) {
     e.preventDefault();
@@ -32,7 +27,7 @@ export default function Form(props) {
              name="text"
              autoComplete="off"
              value={name}
-             onChange={handleInputChange}/>
+             onChange={e => setName(e.target.value)}/>
 
       <button type="submit"
               className="btn btn__primary btn__lg"

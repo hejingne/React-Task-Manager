@@ -1,14 +1,14 @@
-import React, {useState} from "react";
+import React, { useState, useRef } from "react";
 
 export default function Task(props) {
-  /* View state */
-  const [isEditing, setEditing] = useState(false);
-  /* Edited task name state */
-  const [editName, setEditName] = useState('');
-  /* 2 Different Views */
-  const editingView = (
+  // States
+  const [isEditing, setIsEditing] = useState(false);  // view
+  const [name, setName] = useState('');   // edited task input field
+
+  // 2 Different Views
+  const editView = (
     <form className="stack-small"
-          onSubmit={handleEditSave}>
+          onSubmit={saveEdit}>
       <div className="form-group">
           <label className="todo-label" htmlFor={props.id}>
           New name for '{props.name}'
@@ -16,13 +16,13 @@ export default function Task(props) {
           <input id={props.id}
                  className="todo-text"
                  type="text"
-                 value={editName}
-                 onChange={handleInputChange} />
+                 value={name}
+                 onChange={e => setName(e.target.value)} />
       </div>
       <div className="btn-group">
           <button type="button"
                   className="btn todo-cancel"
-                  onClick={() => setEditing(false)}>
+                  onClick={cancelEdit}>
             Cancel
           </button>
           <button type="submit"
@@ -38,13 +38,13 @@ export default function Task(props) {
           <input type="checkbox"
                  id={props.id}
                  defaultChecked={props.checked}
-                 onChange={() => props.toggleTaskChecked(props.id)} />
+                 onChange={() => props.checkTask(props.id)} />
           <label className="todo-label" htmlFor={props.id}>
             Learn {props.name}
           </label>
         <button type="button"
                 className="btn"
-                onClick={() => setEditing(true)}>
+                onClick={() => setIsEditing(true)}>
           Edit
         </button>
         <button type="button"
@@ -55,28 +55,29 @@ export default function Task(props) {
       </div>
     </form>
   );
-  /* Function invoked by editing a task */
-  function handleInputChange(e) {
-    setEditName(e.target.value)
-  }
-  /* Function invoked by saving name change */
-  function handleEditSave(e) {
+
+  function saveEdit(e) {
     e.preventDefault();
-    if (editName === "") {
+    if (name === "") {
       alert("Please provide a name for the selected task.")
-    } else if (editName === props.name) {
+    } else if (name === props.name) {
       alert("Name has to be different from current name of the task.")
-      setEditName("");
+      setName("");
     } else {
-      props.editTask(props.id, editName);
-      setEditName("");
-      setEditing(false);
+      props.editTask(props.id, name);
+      setName("");
+      setIsEditing(false);
     }
+  }
+
+  function cancelEdit() {
+    setName("");
+    setIsEditing(false);
   }
 
   return (
     <li className="todo stack-small">
-      {isEditing ? editingView : listView}
+      {isEditing ? editView : listView}
     </li>
   );
 }
