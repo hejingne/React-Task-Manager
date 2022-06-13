@@ -1,9 +1,21 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+
+// Custom Hook
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value
+  });
+  return ref.current;
+}
 
 export default function Task(props) {
   // States
   const [isEditing, setIsEditing] = useState(false);  // view
-  const [name, setName] = useState('');   // edited task input field
+  const [name, setName] = useState(''); // edit field value
+  const editFieldRef = useRef(null);  // reference to edit field
+  const editBtnRef = useRef(null);  // reference to edit button
+  const wasEditing = usePrevious(isEditing);  // previous value of isEditing
 
   // 2 Different Views
   const editView = (
@@ -17,7 +29,8 @@ export default function Task(props) {
                  className="todo-text"
                  type="text"
                  value={name}
-                 onChange={e => setName(e.target.value)} />
+                 onChange={e => setName(e.target.value)}
+                 ref={editFieldRef}/>
       </div>
       <div className="btn-group">
           <button type="button"
@@ -44,7 +57,8 @@ export default function Task(props) {
           </label>
         <button type="button"
                 className="btn"
-                onClick={() => setIsEditing(true)}>
+                onClick={() => setIsEditing(true)}
+                ref={editBtnRef}>
           Edit
         </button>
         <button type="button"
@@ -74,6 +88,15 @@ export default function Task(props) {
     setName("");
     setIsEditing(false);
   }
+
+  useEffect(() => {
+    if (!wasEditing && isEditing) {
+      editFieldRef.current.focus();
+    }
+    if (wasEditing && !isEditing) {
+      editBtnRef.current.focus();
+    }
+  }, [wasEditing, isEditing]);  // change focus only when toggling between edit and list view
 
   return (
     <li className="todo stack-small">

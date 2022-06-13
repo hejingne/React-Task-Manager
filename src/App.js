@@ -1,7 +1,16 @@
-import React, {useState} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Task from "./components/Task";
 import Form from "./components/Form";
 import FilterBtn from "./components/FilterBtn";
+
+// Custom Hook
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value
+  });
+  return ref.current;
+}
 
 const FILTER_MAP = {
   All: () => true,
@@ -13,6 +22,8 @@ function App(props) {
   // States
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState('All');
+  const headingRef = useRef(null);
+  const prevTasklength = usePrevious(tasks.length);
 
   // Dynamic list of tasks
   const taskList = tasks
@@ -67,6 +78,11 @@ function App(props) {
     setTasks(remainingTasks);
   }
 
+  useEffect(() => {
+    if (tasks.length - prevTasklength === -1) {
+      headingRef.current.focus();
+    }
+  }, [tasks.length, prevTasklength]);   // change focus onto the heading message when a task is deleted
 
   return (
     <div className="app_stack_lg">
@@ -75,15 +91,19 @@ function App(props) {
       <Form addTask={addTask} />
 
       <div className="filters btn-group stack-exception">
-        {filterBtnList}
+          {filterBtnList}
       </div>
 
-      <h2 className="list-heading"> {headingText} </h2>
+      <h2 className="list-heading"
+          tabIndex="-1"
+          ref={headingRef}>
+          {headingText}
+      </h2>
 
       <ul role="list"
           className="todo-list stack-large stack-exception"
           aria_labelledby="list-heading">
-        {taskList}
+          {taskList}
       </ul>
     </div>
   );
